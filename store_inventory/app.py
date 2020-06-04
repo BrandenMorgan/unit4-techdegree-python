@@ -22,6 +22,7 @@ class Product(Model):
 
 
 def add_to_database(**kwargs):
+    """Read cleaned data into database"""
     for product in inventory_list:
         try:
             Product.create(**product)
@@ -35,13 +36,17 @@ def add_to_database(**kwargs):
 
 
 def clear():
+    """Clear the screen"""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def menu_loop():
+    """Display menu options to user"""
+
     choice = None
 
     while choice != 'q':
+        print('\n' + '=' * 10, "MENU", '=' * 10)
         print("\nEnter 'q' to quit.\n")
         for key, value in menu.items():
             print('{}) {}'.format(key, value.__doc__))
@@ -86,7 +91,6 @@ def view_product():
             print("Product of id '{}' not in database. Please enter valid id.\n".format(id))
 
 
-
 def add_product():
     """Add a product"""
     while True:
@@ -116,11 +120,10 @@ def add_product():
                     print('\nProduct added successfully!')
                     break
                 except IntegrityError:
-                    print('{} already exists in the database. Please enter a different product'.format(product_name))
-                    product_record = Product.get(product_name=product['product_name'])
-                    product_record.product_quantity = product['product_quantity']
-                    product_record.product_price = product['product_price']
-                    product_record.date_updated = product['date_updated']
+                    product_record = Product.get(product_name=product_name)
+                    product_record.product_quantity = product_quantity
+                    product_record.product_price = int(product_price)
+                    product_record.date_updated = datetime.datetime.now()
                     product_record.save()
                     add_product = input('Would you like to add another product? [y]es/[n]o ').lower()
                     if add_product in ['y', 'yes']:
